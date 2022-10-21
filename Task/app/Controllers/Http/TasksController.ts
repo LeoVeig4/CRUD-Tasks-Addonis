@@ -9,6 +9,7 @@ export default class TasksController {
 
 
   public async store({ auth, request}: HttpContextContract) {
+    
     const body= request.only(['nome', 'info'])
     const tasks = await Task.create({
       user_id: auth.user!.id,

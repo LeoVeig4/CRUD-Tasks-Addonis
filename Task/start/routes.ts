@@ -2,7 +2,7 @@
 import Route from '@ioc:Adonis/Core/Route'
 import Hash from '@ioc:Adonis/Core/Hash'
 import User from 'App/Models/User'
-import UsersController from 'App/Controllers/Http/UsersController'
+
 
 
 Route.post('login', async ({ auth, request, response }) => {
@@ -26,7 +26,7 @@ Route.post('login', async ({ auth, request, response }) => {
   })
 
   Route.post('users', 'UsersController.store')
-
+//apenas para 
   Route.group(() => {
 
     Route.get('users', 'UsersController.index')
@@ -44,7 +44,7 @@ Route.post('login', async ({ auth, request, response }) => {
     Route.delete('task/:id', 'TaskController.destroy')
     Route.put('task', 'TaskController.update')
 
-  })
+  }).middleware(['auth'])
   
   Route.get('loggedas', async ({ auth }) => { //ver aonde está logado
     await auth.use('api').authenticate()
