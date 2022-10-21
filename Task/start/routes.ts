@@ -2,7 +2,8 @@
 import Route from '@ioc:Adonis/Core/Route'
 import Hash from '@ioc:Adonis/Core/Hash'
 import User from 'App/Models/User'
-import TasksController from 'App/Controllers/Http/TasksController'
+import UsersController from 'App/Controllers/Http/UsersController'
+
 
 Route.post('login', async ({ auth, request, response }) => {
     const username = request.input('username')
@@ -24,12 +25,30 @@ Route.post('login', async ({ auth, request, response }) => {
     return token
   })
 
+  Route.post('users', 'UsersController.store')
+
+  Route.group(() => {
+
+    Route.get('users', 'UsersController.index')
+    Route.get('users/:id', 'UsersController.show')
+    Route.put('users/:id', 'UsersController.update')//precisa ser ou admin ou a pessoa
+    Route.delete('users/:id', 'UsersController.destroy')
+
+  }).middleware(['auth'])
+
+  Route.group(() => {
+
+    Route.get('task', 'TaskController.index')
+    Route.post('task', 'TaskController.store')
+    Route.get('task/:id', 'TaskController.show')
+    Route.delete('task/:id', 'TaskController.destroy')
+    Route.put('task', 'TaskController.update')
+
+  })
+  
   Route.get('loggedas', async ({ auth }) => { //ver aonde está logado
     await auth.use('api').authenticate()
     return `You are logged in as ${auth.user!.username}`
   })
 
-  Route.resource('task', 'TasksController')
 
-
-Route.resource('users', 'UsersController')

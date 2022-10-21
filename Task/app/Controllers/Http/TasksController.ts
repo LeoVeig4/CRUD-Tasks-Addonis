@@ -7,12 +7,8 @@ export default class TasksController {
     return task
   }
 
-  public async create({}: HttpContextContract ) {
-
-  }
 
   public async store({ auth, request}: HttpContextContract) {
-    await auth.use('api').authenticate()
     const body= request.only(['nome', 'info'])
     const tasks = await Task.create({
       user_id: auth.user!.id,
@@ -24,27 +20,25 @@ export default class TasksController {
     return tasks
   }
 
-  public async show({auth, request}: HttpContextContract) {
-    await auth.use('api').authenticate()
+  public async show({auth, request, response}: HttpContextContract) {
     const user = auth.user!
     const userId = request.param('id')
 
     if(!userId || userId != user.id ){
-      return `você não pode acessar essas tasks`
+      return response.unauthorized({ message: 'Não autorizado.' })
     }
    
     const task = await Task.query().where('user_id', '=', userId)
     return task
   }
 
-  public async update({auth, request}: HttpContextContract) {
-    await auth.use('api').authenticate()
+  public async update({auth, request, response}: HttpContextContract) {
     const user = auth.user!
     const taskId = request.param('id')
     const task = await Task.findOrFail(taskId)
 
     if(task.user_id != user.id ){
-      return `você não pode mudar a task de outro usuário`
+      return response.unauthorized({ message: 'Não autorizado.' })
     }
 
     const body = request.only(['nome', 'info', 'done'])
@@ -52,13 +46,12 @@ export default class TasksController {
     return task
   }
 
-  public async destroy({auth, request}: HttpContextContract) {
-    await auth.use('api').authenticate()
+  public async destroy({auth, request, response}: HttpContextContract) {
     const user = auth.user!
     const taskId = request.param('id')
     const task = await Task.findOrFail(taskId)
     if(task.user_id != user.id ){
-      return `você não pode excluir essa task`
+      return  response.unauthorized({ message: 'Não autorizado.' })
     }
 
     const taskexclude= await Task.findOrFail(taskId)
