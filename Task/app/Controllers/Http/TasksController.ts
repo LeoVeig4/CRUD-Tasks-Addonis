@@ -1,6 +1,9 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Task from 'App/Models/Task'
 
+import StoreTaskValidator from 'App/Validators/StoreTaskValidator'
+import UpdateTaskValidator from 'App/Validators/UpdateTaskValidator'
+
 export default class TasksController {
   public async index({}: HttpContextContract) {
     const task= await Task.all()
@@ -8,13 +11,20 @@ export default class TasksController {
   }
 
 
-  public async store({ auth, request}: HttpContextContract) {
+  public async store({ auth, request, response}: HttpContextContract) {
     
-    const body= request.only(['nome', 'info'])
+    const controlData = await request.validate(StoreTaskValidator)
+    const user = auth.user!
+    const userId = request.param('id')
+
+    if(!userId || userId != user.id ){
+      return response.unauthorized({ message: 'Não autorizado.' })
+    }
+
     const tasks = await Task.create({
       user_id: auth.user!.id,
-      nome: body.nome,
-      info: body.info,
+      nome: controlData.nome,
+      info: controlData.info,
       done: false,
     })
 
@@ -34,6 +44,8 @@ export default class TasksController {
   }
 
   public async update({auth, request, response}: HttpContextContract) {
+    const controlData = await request.validate(UpdateTaskValidator)
+    
     const user = auth.user!
     const taskId = request.param('id')
     const task = await Task.findOrFail(taskId)
@@ -42,8 +54,7 @@ export default class TasksController {
       return response.unauthorized({ message: 'Não autorizado.' })
     }
 
-    const body = request.only(['nome', 'info', 'done'])
-    await task.merge(body).save()
+    await task.merge(controlData).save()
     return task
   }
 
