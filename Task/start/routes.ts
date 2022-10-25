@@ -55,4 +55,5 @@ Route.post('login', async ({ auth, request, response }: HttpContextContract) => 
   // Generate token
   const token = await auth.use('api').generate(user)
   return token
+
 })
