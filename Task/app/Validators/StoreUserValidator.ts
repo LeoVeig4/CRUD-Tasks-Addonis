@@ -5,11 +5,12 @@ export default class StoreUserValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    username: schema.string({}, [
-        rules.unique({table: 'users', column: 'username'})
-    ]),
+    username: schema.string(),
     password: schema.string({}, [
         rules.minLength(4)
+    ]),
+    email: schema.string({}, [
+      rules.unique({table: 'users', column: 'email'})
     ])
   })
 

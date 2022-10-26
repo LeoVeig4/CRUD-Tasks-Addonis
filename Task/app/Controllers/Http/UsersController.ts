@@ -15,6 +15,7 @@ export default class UsersController {
         const controlData = await request.validate(StoreUserValidator)
         const user = await User.create({
           username: controlData.username,
+          email: controlData.email,
           password: controlData.password
         })
         console.log(user.$isPersisted)

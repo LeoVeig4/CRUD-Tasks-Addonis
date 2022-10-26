@@ -7,6 +7,12 @@ import User from 'App/Models/User'
 
   Route.post('users', 'UsersController.store')
 
+  Route.post('addslug', 'AddRolesController.store')
+    .namespace('App/Controllers/Http/Admin')
+
+  Route.post('addadmin', 'AddRolesController.create')
+  .namespace('App/Controllers/Http/Admin')
+    
 //apenas para 
   Route.group(() => {
 
@@ -30,7 +36,7 @@ import User from 'App/Models/User'
   Route.get('loggedas', async ({ auth }) => { //ver aonde está logado
     await auth.use('api').authenticate()
     return `You are logged in as ${auth.user!.username}`
-  })
+  }).middleware(['auth', 'role:admin'])
 
 //rota com problema
 Route.post('login', async ({ auth, request, response }: HttpContextContract) => {

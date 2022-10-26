@@ -2,6 +2,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { AuthenticationException } from '@adonisjs/auth/build/standalone'
 
 import Database from '@ioc:Adonis/Lucid/Database'
+import RoleUser from 'App/Models/RoleUser'
 
 /*
 Usage: .middleware(role:role1,role2,...)
@@ -14,12 +15,13 @@ export default class RoleDetector {
       const rolesUser = await Database.query()
         .from('role_users')
         .where('user_id', auth.user.id)
-        .innerJoin('roles', 'roles.id', 'role_users.role_id')
+        .innerJoin('roles', 'roles.id', 'role_id')
         .whereIn('slug', guards)
 
+        console.log(rolesUser)
       if (rolesUser.length !== guards.length) {
         throw new AuthenticationException(
-          'Unauthorized access',
+          'Guardian nao ta dando',
           'E_UNAUTHORIZED_ACCESS'
           //this.redirectTo
         )
