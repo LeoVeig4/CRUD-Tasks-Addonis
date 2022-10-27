@@ -4,25 +4,26 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Route from '@ioc:Adonis/Core/Route'
 import Hash from '@ioc:Adonis/Core/Hash'
 import User from 'App/Models/User'
+import RoleUser from 'App/Models/RoleUserr'
 
-  Route.post('users', 'UsersController.store')
 
-  Route.post('addslug', 'AddRolesController.store')
-    .namespace('App/Controllers/Http/Admin')
 
-  Route.post('addadmin', 'AddRolesController.create')
-  .namespace('App/Controllers/Http/Admin')
     
-//apenas para 
+//apenas para admin
   Route.group(() => {
 
+    Route.post('users', 'UsersController.store')
     Route.get('users', 'UsersController.index')
     Route.get('users/:id', 'UsersController.show')
-    Route.put('users/:id', 'UsersController.update')//precisa ser ou admin ou a pessoa
+    Route.put('users/:id', 'UsersController.update')
     Route.delete('users/:id', 'UsersController.destroy')
 
-  }).middleware(['auth'])
+    Route.post('addslug', 'AddRolesController.store')
+    Route.post('addadmin', 'AddRolesController.create')
+    
 
+  }).middleware(['auth', 'role:admin']).prefix('admin').namespace('App/Controllers/Http/Admin')
+//não estão funcionando, precisa configurar a tabela de students
   Route.group(() => {
 
     Route.get('task', 'TaskController.index')
@@ -31,14 +32,16 @@ import User from 'App/Models/User'
     Route.delete('task/:id', 'TaskController.destroy')
     Route.put('task', 'TaskController.update')
 
-  }).middleware(['auth'])
+  }).middleware(['auth', 'role:student']).prefix('student').namespace('App/Controllers/Http/Student')
   
+  //não ta funcionando carregar a role
   Route.get('loggedas', async ({ auth }) => { //ver aonde está logado
-    await auth.use('api').authenticate()
-    return `You are logged in as ${auth.user!.username}`
-  }).middleware(['auth', 'role:admin'])
+  
+      const role= await RoleUser.query().where('user_id', auth.user!.id).join('roles', 'roles.id', 'role_id')
+      return `You are logged in as ${auth.user!.username} and your role is ${role}`
+    
+  }).middleware(['auth'])
 
-//rota com problema
 Route.post('login', async ({ auth, request, response }: HttpContextContract) => {
 
   const loginSchema = schema.create({

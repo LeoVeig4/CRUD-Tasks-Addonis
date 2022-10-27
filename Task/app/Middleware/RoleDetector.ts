@@ -2,7 +2,6 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { AuthenticationException } from '@adonisjs/auth/build/standalone'
 
 import Database from '@ioc:Adonis/Lucid/Database'
-import RoleUser from 'App/Models/RoleUser'
 
 /*
 Usage: .middleware(role:role1,role2,...)

@@ -2,6 +2,8 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import StoreUserValidator from 'App/Validators/StoreUserValidator'
 import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
+import RoleUser from 'App/Models/RoleUserr'
+import Role from 'App/Models/Role'
 
 export default class UsersController {
 
@@ -11,13 +13,21 @@ export default class UsersController {
       }
       
       public async store({ request }: HttpContextContract) {
-        //validator
+        
         const controlData = await request.validate(StoreUserValidator)
         const user = await User.create({
           username: controlData.username,
           email: controlData.email,
           password: controlData.password
         })
+
+        const role= await Role.findByOrFail('slug', 'student')
+
+        const roleuser = await RoleUser.create({
+          user_id: user.id,
+          role_id: role.id,
+        })
+        
         console.log(user.$isPersisted)
         return user
       }
@@ -32,7 +42,6 @@ export default class UsersController {
         
         const controlData = await request.validate(UpdateUserValidator)
         const userId = request.param('id')
-       // const body = request.only(['username', 'password'])
         const user = await User.findOrFail(userId)
         await user.merge(controlData).save()
         return user

@@ -8,7 +8,7 @@ export default class extends BaseSchema {
 
       table.increments('id')
       table.string('username', 80 ).notNullable()
-      table.string('password', 60 ).notNullable().unique()
+      table.string('password', 255 ).notNullable().unique()
       table.string('email', 255).notNullable().unique()
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

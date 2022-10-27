@@ -3,7 +3,7 @@ import Role from 'App/Models/Role'
 import User from 'App/Models/User'
 import StoreUserValidator from 'App/Validators/StoreUserValidator'
 import RoleAddValidator from 'App/Validators/RoleAddValidator'
-import RoleUser from 'App/Models/RoleUser'
+import RoleUser from 'App/Models/RoleUserr'
 export default class AddRolesController {
 
     public async store({ request}: HttpContextContract) {

@@ -15,14 +15,9 @@ export default class TasksController {
     
     const controlData = await request.validate(StoreTaskValidator)
     const user = auth.user!
-    const userId = request.param('id')
-
-    if(!userId || userId != user.id ){
-      return response.unauthorized({ message: 'Não autorizado.' })
-    }
 
     const tasks = await Task.create({
-      user_id: auth.user!.id,
+      user_id: user.id,
       nome: controlData.nome,
       info: controlData.info,
       done: false,

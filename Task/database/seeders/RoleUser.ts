@@ -10,6 +10,7 @@ export default class UserSeeder extends BaseSeeder {
     try {
       const user = await User.create(
         {
+          username:'leonar',
           email: Env.get('ADMIN_EMAIL'),
           password: Env.get('ADMIN_PASSWORD'),
         },
@@ -24,6 +25,7 @@ export default class UserSeeder extends BaseSeeder {
     } catch (e) {
       await trx.rollback()
       console.log('Erro ao criar admin')
+      console.log(e)
     }
   }
 }
