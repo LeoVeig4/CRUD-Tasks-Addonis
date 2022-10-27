@@ -4,7 +4,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Route from '@ioc:Adonis/Core/Route'
 import Hash from '@ioc:Adonis/Core/Hash'
 import User from 'App/Models/User'
-import RoleUser from 'App/Models/RoleUserr'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 
 
@@ -20,25 +20,32 @@ import RoleUser from 'App/Models/RoleUserr'
 
     Route.post('addslug', 'AddRolesController.store')
     Route.post('addadmin', 'AddRolesController.create')
-    
+
+    Route.get('user', 'AdminsController.index')
 
   }).middleware(['auth', 'role:admin']).prefix('admin').namespace('App/Controllers/Http/Admin')
-//não estão funcionando, precisa configurar a tabela de students
+
   Route.group(() => {
 
-    Route.get('task', 'TaskController.index')
-    Route.post('task', 'TaskController.store')
-    Route.get('task/:id', 'TaskController.show')
-    Route.delete('task/:id', 'TaskController.destroy')
-    Route.put('task', 'TaskController.update')
+    Route.get('task', 'TasksController.index')
+    Route.post('task', 'TasksController.store')
+    Route.get('task/:id', 'TasksController.show')
+    Route.delete('task/:id', 'TasksController.destroy')
+    Route.put('task', 'TasksController.update')
 
   }).middleware(['auth', 'role:student']).prefix('student').namespace('App/Controllers/Http/Student')
   
   //não ta funcionando carregar a role
-  Route.get('loggedas', async ({ auth }) => { //ver aonde está logado
-  
-      const role= await RoleUser.query().where('user_id', auth.user!.id).join('roles', 'roles.id', 'role_id')
-      return `You are logged in as ${auth.user!.username} and your role is ${role}`
+  Route.get('loggedas', async ({ auth, response }) => { //ver aonde está logado
+
+      const rolesUser = await Database.query()
+      .select('slug as role')
+      .from('role_users')
+      .where('user_id', auth.user!.id)
+      .innerJoin('roles', 'roles.id', 'role_users.role_id')
+      const roles = rolesUser.map((value) => value.role)
+
+      return {message: `You are logged in as ${auth.user!.username} and your role is ${roles}`}
     
   }).middleware(['auth'])
 

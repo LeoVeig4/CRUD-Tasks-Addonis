@@ -11,11 +11,11 @@ export default class TasksController {
   }
 
 
-  public async store({ auth, request, response}: HttpContextContract) {
+  public async store({ auth, request}: HttpContextContract) {
     
     const controlData = await request.validate(StoreTaskValidator)
-    const user = auth.user!
-
+    const user = await auth.user!
+    
     const tasks = await Task.create({
       user_id: user.id,
       nome: controlData.nome,

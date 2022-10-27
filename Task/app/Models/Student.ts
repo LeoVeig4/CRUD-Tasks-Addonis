@@ -13,7 +13,7 @@ export default class Student extends BaseModel {
 
   @belongsTo( () => User, {
     localKey: 'user_id',
-    foreignKey: 'user_id',
+    foreignKey: 'id',
   })
   public user: BelongsTo<typeof User>
 

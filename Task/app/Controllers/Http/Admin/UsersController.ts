@@ -4,6 +4,7 @@ import StoreUserValidator from 'App/Validators/StoreUserValidator'
 import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
 import RoleUser from 'App/Models/RoleUserr'
 import Role from 'App/Models/Role'
+import Student from 'App/Models/Student'
 
 export default class UsersController {
 
@@ -23,13 +24,23 @@ export default class UsersController {
 
         const role= await Role.findByOrFail('slug', 'student')
 
+        const student = await Student.create({
+          user_id: user.id,
+        })
+          
+
         const roleuser = await RoleUser.create({
           user_id: user.id,
           role_id: role.id,
         })
         
         console.log(user.$isPersisted)
-        return user
+        
+        return{
+          user:user,
+          roleuser:roleuser,
+          student:student
+        }
       }
 
       public async show({request}: HttpContextContract) {

@@ -4,6 +4,7 @@ import User from 'App/Models/User'
 import StoreUserValidator from 'App/Validators/StoreUserValidator'
 import RoleAddValidator from 'App/Validators/RoleAddValidator'
 import RoleUser from 'App/Models/RoleUserr'
+import Admin from 'App/Models/Admin'
 export default class AddRolesController {
 
     public async store({ request}: HttpContextContract) {
@@ -23,8 +24,12 @@ export default class AddRolesController {
           email: controlData.email,
           password: controlData.password
         })
-
+        
         const role= await Role.findByOrFail('slug', 'admin')
+        
+        const admin= await Admin.create({
+          user_id: user.id
+        })
 
         const roleuser = await RoleUser.create({
           user_id: user.id,
